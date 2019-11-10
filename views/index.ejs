@@ -39,6 +39,9 @@
               },
               success: function(result,status) {
                 $("#totalScore").html("Total Score: " + result.score);
+                if(result.score >= 80) {
+                  $("#scorefb").html("Congrats on the good score!");
+                }
                 for (let i=0; i < 7; i++) {
                    $(`#q${i+1}Feedback`).html(result.feedback[i].fback);
                   if(result.feedback[i].fback == "Right!"){
@@ -149,6 +152,7 @@
     <br><br>
 
     <h2 id="totalScore" class="text-info">Total Score:  </h2>
+    <h3 id="scorefb"></h3>
    
    <!--</form>-->
    
