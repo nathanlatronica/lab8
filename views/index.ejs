@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>US Quiz (Express)</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+  <script>
+    $(document).ready(function(){
+      //Event Listeners
+      $(".q5choice").on("click", function(){
+      	 $(".q5choice").css("background-color",""); //resets background color
+      	 $(this).css("background-color","rgb(255, 255, 0)"); 
+      	 $("#q5").val($(this).attr("id"));//use to pass to the server the id of the image clicked on
+      })
+      
+      
+      $("#submitBtn").on("click", function(){
+        $.ajax({
+  
+              method: "GET",
+              url: "/gradeQuiz",
+              dataType: "json",
+              data: { "q1": $("#q1").val(),
+                      "q2": $("#q2").val(),
+                      "q3a": $("#q3a").is(":checked"),
+                      "q3b": $("#q3b").is(":checked"),
+                      "q3c": $("#q3c").is(":checked"),
+                      "q3d": $("#q3d").is(":checked"),
+                       "q4": $("input[name=q4]:checked").val(),
+                       "q5": $("#q5").val(),
+                       "q6": $("#q6").val(),
+                       "q7": $("#q7").val(),
+                      "q8a": $("#q8a").is(":checked"),
+                      "q8b": $("#q8b").is(":checked"),
+                      "q8c": $("#q8c").is(":checked"),
+                      "q8d": $("#q8d").is(":checked")
+              },
+              success: function(result,status) {
+                $("#totalScore").html("Total Score: " + result.score);
+                for (let i=0; i < 7; i++) {
+                   $(`#q${i+1}Feedback`).html(result.feedback[i].fback);
+                  if(result.feedback[i].fback == "Right!"){
+                    console.log(i + " Right")
+                    $(`#q${i+1}Feedback`).attr("class", "bg-success text-white");
+                    $(`#markImg${i+1}`).html("<img src ='img/checkmark.png'>");
+                   } else {
+                    $(`#q${i+1}Feedback`).attr("class", "bg-warning text-white");
+                    $(`#markImg${i+1}`).html("<img src ='img/xmark.png' alt='xmark'>");
+                   }
+                }
+              }
+        
+        });//ajax
+      });//submitBtn
+      
+      
+    })//ready
+  </script>
+
+</head>
+<body class="text-center">
+
+  <h1 class="jumbotron"> US Geography Quiz <br> Express Version </h1>
+  
+  <!--<form>-->
+  
+  <h3><span id="markImg1"></span> What is the capital of California?</h3>
+  <input type="text" id="q1" name="q1" value="">
+  <br><br>
+   <div id="q1Feedback"></div>
+  <br>
+
+  <h3><span id="markImg2"></span>What is the longest river?</h3>
+    <select id="q2" name="q2">
+        <option value="">Select One</option>
+        <option value="ms">Mississippi</option>
+        <option selected value="mo">Missouri</option>
+        <option value="co">Colorado</option>
+        <option value="de">Delaware</option>
+    </select>
+    <br><br>
+  <div id="q2Feedback"></div>
+  <br>
+
+    <h3><span id="markImg3"></span>What presidents are carved into mount Rushmore?</h3>
+    <input type="checkbox" name="q3a" id="q3a"> <label for="q3a"> A. Jackson    </label> 
+    <input type="checkbox" name="q3b" id="q3b"> <label for="q3b">B. Franklin  </label>
+    <input type="checkbox" name="q3c" id="q3c"> <label for="q3c">T. Jefferson</label>
+    <input type="checkbox" name="q3d" id="q3d"> <label for="q3d">T. Roosevelt</label>
+    <br><br>
+    <div id="q3Feedback"></div>
+    <br>
+
+	<h3><span id="markImg4"></span>What is the smallest US state?</h3>
+	<div id="choices"> 
+	
+	  <% q3Choices.forEach(function(choice){ %>
+	  
+	  <input type="radio" name="q4" value="<%=choice%>" id="<%=choice%>"> <label for="<%=choice%>"> <%=choice.toUpperCase()%> </label>
+	  
+	  <% }) %>
+	
+	</div>
+    <br><br>
+    <div id="q4Feedback"></div>
+    <br>
+    
+    <h3><span id="markImg5"></span>Which is the correct seal of California?</h3>
+    <img src="/img/seal1.png" alt= "seal1" class="q5choice" id="seal1">
+    <img src="/img/seal2.png" alt= "seal2" class="q5choice" id="seal2">
+    <img src="/img/seal3.png" alt= "seal3" class="q5choice" id="seal3">
+
+    <input type="hidden" id="q5" />
+    
+	<br><br>
+    <div id="q5Feedback"></div>
+    <br>
+    
+	<h3><span id="markImg6" name="q6"></span> What year was the United States founded?</h3>
+	<input type="text" id="q6" value="2019">
+	<br><br>
+	<div id="q6Feedback"></div>
+	<br>	
+
+ 	<h3><span id="markImg7"></span>Who is the 18th President?</h3>
+	<select id="q7" name="q7">
+	  <option value="">Select One</option>
+      <option value="GC">Grover Cleveland</option>
+      <option value="AJ">Andrew Johnson</option>
+      <option value="UG">Ulysses S. Grant</option>
+	  <option value="RH">Rutherford B. Hayes</option>
+  	</select>   
+	<br><br>
+	<div id="q7Feedback"></div>
+	<br>
+
+	<h3><span id="markImg8"></span>Which of the following are true?</h3>
+	<input type="checkbox" id="48" name="q8a"> <label for="48"> We have had 48 total presidents  </label>
+	<input type="checkbox" id="15" name="q8b"> <label for="15">In 1795 we only had 15 states  </label>
+	<input type="checkbox" id="vp" name="q8c"> <label for="vp">Elbridge Gerry was the 5th Vice President  </label>
+	<input type="checkbox" id="sal" name="q8d"> <label for="sal">The Pres has an annual salary of $750,000</label>
+	<br><br>
+	<div id="q8Feedback"></div>
+	<br>
+
+    <button id="submitBtn" class="btn btn-outline-success"> Submit Quiz </button>
+    <br><br>
+
+    <h2 id="totalScore" class="text-info">Total Score:  </h2>
+   
+   <!--</form>-->
+   
+</body>
+</html>
